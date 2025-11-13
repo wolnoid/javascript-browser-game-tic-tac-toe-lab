@@ -1,8 +1,5 @@
 /*-------------------------------- Constants --------------------------------*/
 
-const squareEls = document.querySelectorAll('.sqr')
-const messageEl = document.querySelector('#message')
-const boardEl = document.querySelector('.board')
 const winningCombos = [
     [0, 1, 2],
     [3, 4, 5],
@@ -16,16 +13,17 @@ const winningCombos = [
 
 /*---------------------------- Variables (state) ----------------------------*/
 
-let turn = 'X'
-let winner = false
-let tie = false
-let board = ['', '', '',
-             '', '', '',
-             '', '', '',]
+let turn = undefined
+let winner = undefined
+let tie = undefined
+let board = undefined
 
 /*------------------------ Cached Element References ------------------------*/
 
-
+const squareEls = document.querySelectorAll('.sqr')
+const messageEl = document.querySelector('#message')
+const boardEl = document.querySelector('.board')
+const resetBtnEl = document.querySelector('#reset')
 
 /*-------------------------------- Functions --------------------------------*/
 
@@ -38,7 +36,7 @@ function updateBoard() {
 function updateMessage() {
     if (winner === false && tie === false) messageEl.textContent = `${turn}'s turn`
     if (winner === false && tie === true) messageEl.textContent = "It's a draw!"
-    if (winner === true) messageEl.textContent = `${winner} wins!`
+    if (winner === true) messageEl.textContent = `${turn} wins!`
 }
 
 function render() {
@@ -55,9 +53,8 @@ function placePiece(index) {
 function checkForWinner() {
     winningCombos.forEach((winningCombo) => {
         if (board[winningCombo[0]] !== '') {
-            if (board[winningCombo[0]] === board[winningCombo[1]] === board[winningCombo[2]]) {
-                winner === true
-                return
+            if (board[winningCombo[0]] === board[winningCombo[1]] && board[winningCombo[1]] === board[winningCombo[2]]) {
+                winner = true
             }
         }
     })
@@ -65,7 +62,8 @@ function checkForWinner() {
 
 function checkForTie() {
     if (winner === true) return
-
+    if (board.includes('')) return
+    tie = true
 }
 
 function switchPlayerTurn() {
@@ -78,57 +76,34 @@ function handleClick (event, squareIndex) {
     if (board[squareIndex] === 'X' || board[squareIndex] === 'O') return
     if (winner === true) return
     placePiece(squareIndex)
-    console.log(board)
-    console.log(winner)
     checkForWinner()
     checkForTie()
     switchPlayerTurn()
+    render()
 }
 
 function init() {
-
+    turn = 'X'
+    winner = false
+    tie = false
+    board = ['', '', '',
+             '', '', '',
+             '', '', '',]
     render()
 }
 
 /*----------------------------- Event Listeners -----------------------------*/
 
-
-
-
 boardEl.addEventListener('click', (event)  => {
     if (event.target.classList.contains("sqr")) {
-        
         handleClick('', event.target.id)
-        
     }
 });
 
+resetBtnEl.addEventListener('click', ()  => {
+    init()
+});
 
-
-
-
-
-
-
-
-
+/*---------------------------------------------------------------------------*/
 
 init()
-updateBoard()
-
-
-
-//1) Define the required variables used to track the state of the game.
-
-//2) Store cached element references.
-
-//3) Upon loading, the game state should be initialized, and a function should 
-//   be called to render this game state.
-
-//4) The state of the game should be rendered to the user.
-
-//5) Define the required constants.
-
-//6) Handle a player clicking a square with a `handleClick` function.
-
-//7) Create Reset functionality.
